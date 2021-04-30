@@ -1,7 +1,7 @@
 # IoT216-ASP.NET
-### 실습
+# 1. 실습
 ---------
-##### Lect 1: ASP.NET WebForms
+### Lect 1: ASP.NET WebForms
 - Label1.Text = TextBox1.Text;  //입력 도중에는 변화 없음 --> 엔터 눌러야
 - Login폼 만들기
     - id, password받을 텍스트 박스 생성→ pw : textbox mode를 password로 
@@ -9,7 +9,7 @@
   - 현재 폼을 default로 default.aspx--> Home.aspx, Login--> Default 
   - Response.Redirect("~/Home");
 
-##### Lect 2,3: ASP.NET MVC - 로그인 페이지
+### Lect 2,3: ASP.NET MVC - 로그인 페이지
 - Login 페이지(액션) 만들기
   - view>home우클릭 >추가-레이아웃이 있는 mvc 5 뷰 페이지(Login.cshtml)
   - > 이대로 실행하면 리소스 없다고 나옴
@@ -45,7 +45,7 @@
     - → string sSec = GetEncrypt(user.password);  user.password = sSec;
 
 ---------
-### 이론
+# 2. 이론
 ---------
 - 인터넷: TCP/IP 프로토콜을 기반으로 전세계 컴퓨터와 네트워크가 연결된 광범위한 통신망
 - 웹 페이지: 웹 브라우저를 통해 보여지는 문서 → HTML로 쓰여짐
@@ -66,7 +66,7 @@
   - 실행 파일이 존재하며, 사용하려면 사용자의 컴퓨터에 설치해야 함
 - 웹 어플리케이션: 웹 브라우저 있으면 사용 가능 ⇒ *WebForm* 
 --------
-### C# 웹 프로그래밍
+# 3. C# 웹 프로그래밍
 --------
 - 웹 서버 프로그래밍 --> c#에서는 ASP.NET이라는 웹 프레임워크를 활용해 쉽게 작성 가능
   - ASP.NET WebForms

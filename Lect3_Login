@@ -1,0 +1,255 @@
+///////////////////////////////////////////////////   --> Models > user.cs
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+namespace WebApplication2.Models
+{
+    public class user
+    {
+        public string id { get; set; }
+
+        public string password { get; set; }
+
+        public string right { get; set; }
+
+    }
+}
+///////////////////////////////////////////////////   --> Context > users.cs
+using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
+using System.Web;
+using WebApplication2.Models;
+
+namespace WebApplication2.Context
+{
+    public class userList : DbContext
+    {
+        public userList() : base(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\YeongjuNa\Documents\EquipmentDatabase.mdf;Integrated Security=True;Connect Timeout=30") { }
+        public DbSet<user> users { get; set; }  //데이터타입은 단일 객체인 user
+    }
+}
+///////////////////////////////////////////////////   --> View > Home > Login.cshtml
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}spd
+
+<div class="jumbotron">
+    <form asp-controller="Home" asp-action="Login">
+        <p>
+            User ID: <input id="Text1" type="text" name="UID" /><input id="Submit1" type="submit" value="submit" />
+        </p>
+        <p>
+            <input id="Password1" type="password" name="PWD" />
+        </p>
+    </form>
+</div>
+///////////////////////////////////////////////////   --> Controller > HomeController.cs
+using MyLibrary;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+
+namespace WebApplication2.Controllers
+{
+    public class HomeController : Controller
+    {
+        public ActionResult Index()
+        {
+            return View();
+        }
+
+        public ActionResult About()
+        {
+            ViewBag.Message = "Your application description page.";
+
+            return View();
+        }
+
+        public ActionResult Contact()
+        {
+            ViewBag.Message = "Your contact page.";
+
+            return View();
+        }
+        string conStr = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\YeongjuNa\Documents\EquipmentDatabase.mdf;Integrated Security = True; Connect Timeout = 30";
+        public ActionResult Login()
+        {
+            string uid = Request.QueryString["UID"];
+            string pwd = Request.QueryString["PWD"];
+
+            if (uid != null)
+            {
+                SQLDB db = new SQLDB(conStr);
+                //아래처럼 sql작성 시, 해당 테이블이 id, password속성으로 이루어졌음이 노출됨
+                //따라서 이런식으로 작성x--> 암호화함
+                //string sql = $"select count(*) from Users where id='{uid}' and passsword='{pwd}'";
+                string r = db.Get($"select password from Users where id='{uid}'").ToString().Trim();
+                if (r == mylib.GetEncrypt(pwd))
+                {
+                    return RedirectToAction("index");
+                }
+            }
+
+            return View();
+        }
+    }
+}
+///////////////////////////////////////////////////   --> Controller > usersController.cs
+using MyLibrary;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Entity;
+using System.Linq;
+using System.Net;
+using System.Security.Cryptography;
+using System.Text;
+using System.Web;
+using System.Web.Mvc;
+using WebApplication2.Context;
+using WebApplication2.Models;
+
+namespace WebApplication2.Controllers
+{
+    public class usersController : Controller
+    {
+        private userList db = new userList();
+
+        // GET: users
+        public ActionResult Index()
+        {
+            return View(db.users.ToList());
+        }
+
+        // GET: users/Details/5
+        public ActionResult Details(string id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            user user = db.users.Find(id);
+            if (user == null)
+            {
+                return HttpNotFound();
+            }
+            return View(user);
+        }
+
+        // GET: users/Create
+        public ActionResult Create()
+        {
+            return View();
+        }
+        /*
+        // 해시 알고리즘으로 암호화하여 반환 --> MyLibrary에 보관
+        public static string GetEncrypt(string str)
+        {
+
+            // MD5- 해시 알고리즘의 종류중 하나 
+            MD5 md = new MD5CryptoServiceProvider();
+            byte[] bArr = md.ComputeHash(Encoding.Default.GetBytes(str));
+
+            string r = "";
+            for (int i = 0; i < bArr.Length; i++)
+            {
+                //r += $"{bArr[i]:x2}";     //두자리의 16진수로
+                r += bArr[i].ToString("x2");
+            }
+            return r;
+
+        }
+        */
+
+        // POST: users/Create
+        // 초과 게시 공격으로부터 보호하려면 바인딩하려는 특정 속성을 사용하도록 설정하세요. 
+        // 자세한 내용은 https://go.microsoft.com/fwlink/?LinkId=317598을(를) 참조하세요.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create([Bind(Include = "id,password,right")] user user)
+        {
+            if (ModelState.IsValid)
+            {
+                string sSec = mylib.GetEncrypt(user.password);
+                user.password = sSec;
+                db.users.Add(user);
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+
+            return View(user);
+        }
+
+        // GET: users/Edit/5
+        public ActionResult Edit(string id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            user user = db.users.Find(id);
+            if (user == null)
+            {
+                return HttpNotFound();
+            }
+            return View(user);
+        }
+
+        // POST: users/Edit/5
+        // 초과 게시 공격으로부터 보호하려면 바인딩하려는 특정 속성을 사용하도록 설정하세요. 
+        // 자세한 내용은 https://go.microsoft.com/fwlink/?LinkId=317598을(를) 참조하세요.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit([Bind(Include = "id,password,right")] user user)
+        {
+            if (ModelState.IsValid)
+            {
+                db.Entry(user).State = EntityState.Modified;
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View(user);
+        }
+
+        // GET: users/Delete/5
+        public ActionResult Delete(string id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            user user = db.users.Find(id);
+            if (user == null)
+            {
+                return HttpNotFound();
+            }
+            return View(user);
+        }
+
+        // POST: users/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteConfirmed(string id)
+        {
+            user user = db.users.Find(id);
+            db.users.Remove(user);
+            db.SaveChanges();
+            return RedirectToAction("Index");
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+    }
+}

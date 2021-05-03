@@ -1,4 +1,4 @@
-# IoT216-ASP.NET
+# IoT216-ASP.NET MVC
 # 1. 실습
 ### Lect 1: ASP.NET WebForms
 - Label1.Text = TextBox1.Text;  //입력 도중에는 변화 없음 --> 엔터 눌러야

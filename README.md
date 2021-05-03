@@ -42,6 +42,7 @@
   - usersController.cs→  메소드 중 user객체와 바인딩된 Create메소드 수정
     - if(modelState.IsValid) 조건에서 user의 pw를 암호화하고 pw를 암호화된 값으로
     - → string sSec = GetEncrypt(user.password);  user.password = sSec;
+- 시행착오: 테이블 첫번째 열 id에 대해 값이 안들어감 --> 테이블 정의에서 identity(1,1)  // 시작값 1, 증가값 1로 저절로 값 
 
 ---------
 # 2. 이론
@@ -78,12 +79,22 @@
     - --> AJAX 기반으로 웹브라우저에서 대부분의 UI를 구성하는 SPA(single page application) 응용의 경우 필수 요소
 - 웹 클라이언트 : c#코드로web리소스를 다운로드하거나 web API를 호출하기 위해 .NET 라이브러리 사용할 수 있다.
   - 주로 사용하는 클래스 : WebClient, HttpWebRequest/ HttpWebResponse
-
-##### ASP.NET MVC
+----------
+#### ASP.NET MVC
 - View 폴더 내부
   - Home 폴더: 뷰이며, 그 안의 cshtml은 action(페이지와 비슷?)
   - Shared 폴더의 layout.cshtml: 기본 레이아웃 → 최상단(header)/ 최하단(footer)
   - View_Start.cshtml: 페이지 전환 요구시, 수행되는 것
+
+- Controller
+  - 컨트롤러 내 각 메서드는 하나의 웹 페이지에 해당, 컨트롤러 파일명에서 controller뺀이름으로 → ex) Home/Index : HomeController의 Index
+  - 새 컨트롤러 생성: 컨트롤러 템플릿을 사용하는 경우, 기본적인 코드를 미리 생성해준다해서 Scaffold 라고 함
+  - Action메서드: 외부 요청에 반응하여 결과를 리턴하는 메서드, 웹 request를 받아 처리 후 그 출력물인 ActionResult 객체를 리턴
+    - ex) return View();	// 베이스 클래스의 View메서드 호출, (MVC Framework에서 미리 지정한) /Views/Home 폴더 (/Views/{컨트롤러명}) 밑에서 메서드와 동일한 이름인 Index.cshtml (C#의 경우) 파일을 HTML 랜더링하여 결과인 ViewResult (ActionResult의 파생클래스) 객체를 리턴
+
+--------
+#### Entity Framework(EF)
+: ORM 도구, ms가 직접 구현한 orm기술로는 EF, LINQ TO SQL이 있음, 이외에도 NHibernate, Dapper같은 .NET ORM 오픈 소스들이 있다
 
 
 

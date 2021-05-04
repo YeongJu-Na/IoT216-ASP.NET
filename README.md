@@ -44,6 +44,24 @@
     - → string sSec = GetEncrypt(user.password);  user.password = sSec;
 - 시행착오: 테이블 첫번째 열 id에 대해 값이 안들어감 --> 테이블 정의에서 identity(1,1)  // 시작값 1, 증가값 1로 저절로 값 
 
+### Lect 4, 5: ASP.NET MVC - 쿠키, SQL EXPRESS, IIS - 게시(Publish)
+- 세션을 이용한 쿠키 - 방문 기록, 서치기록 ==> Session이용 
+  - 로그인 후 다시 로그인 페이지로 가지 않도록 ==> HomeController.cs
+    - 로그인 전, session 존재 여부 확인 --> 있으면 로그인 없이 다음 페이지로
+    - 로그인 시, 해당 session 아이디로 기록하기
+    - > Session["uid"]=uid
+  - 계정별 권한에 따라 특정 페이지 링크 보이도록
+    - HomeController > Login에서 로그인 후 해당 계정의 account값 저장
+    - Shared > Layout: 현재 세션 account가 1일 때만 레이아웃에 링크 추가 ==> c#코드 앞에 @붙여(Razor)
+- 기존의 Local DB 대신 SQL서버 연결하기
+  - 지정된 아이디와 패스워드로 연결, 연결문자열만 변경
+- 게시하기 --> IIS(internet information service)
+  - 제어판-프로그램 및 기능 > windows 기능 켜기/끄기 > 인터넷 정보 서비스 >ftp빼고 모두 체크
+  - 솔루션 탐색기 > 게시 > 폴더 ⇒ 게시 완료 후 repos> webapplication3>bin>app.publish 모든 폴더들을 로컬디스크> inetpub > wwwroot로 옮긴 후 인터넷에서 ip주소 입력하면 볼 수 있음
+    - → 이렇게 폴더로 게시하는 경우, 변경 사항을 매번 wwwroot로 옮기고, 빌드, 게시 해야 반영
+	- → 폴더 경로를 로컬디스크> inetpub> wwwroot로 하면 빌드, 게시만으로 반영 가능
+  - IIS관리자 앱 > 사이트 > 웹사이트 추가 > wwwroot외 다른 폴더 지정 가능
+
 ---------
 # 2. 이론
 - 인터넷: TCP/IP 프로토콜을 기반으로 전세계 컴퓨터와 네트워크가 연결된 광범위한 통신망
@@ -60,6 +78,7 @@
     - 언어: HTML(페이지 구성), CSS(HTML요소에 디자인 요소 적용), JavaScript(페이지 구성물들에 움직임 부여) 
   - 백엔드: 서버측에서 실행되는 코드를 작성하는 것, 서버사이드프로그래밍
     - 웹 서버 프로그램 - tomcat, apach-> 리눅스에서 돌아감 / 윈도우즈에서는 IIS
+    - --> IIS: ms윈도우즈를 사용하는 서버들을 위하 인터넷 기반 서비스들의 모임
     - 언어: JSP, PHP,ASP등 
 - 윈도우 어플리케이션: windows에서 동작하는 프로그램 ⇒ *WinForm*
   - 실행 파일이 존재하며, 사용하려면 사용자의 컴퓨터에 설치해야 함

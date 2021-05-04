@@ -1,0 +1,112 @@
+//////////////////////////////////// HomeController.cs --> 세션을 이용한 쿠키
+using jsLibrary;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using MyLibrary;
+
+namespace WebApplication1.Controllers
+{
+    public class HomeController : Controller
+    {
+        public ActionResult Index()
+        {
+            return View();
+        }
+
+        public ActionResult About()
+        {
+            ViewBag.Message = "Your application description page.";
+
+            return View();
+        }
+
+        public ActionResult Contact()
+        {
+            ViewBag.Message = "Your contact page.";
+
+            return View();
+        }
+        public ActionResult Login()
+        {
+            // 쿠키 검색 -> 로그인 정보 존재 시 
+            if(Session["uid"] != null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            ViewBag.Message = "Your login page.";
+            string uid = Request.QueryString["UID"];
+            string pwd = Request.QueryString["PWD"];
+
+            if (uid != null)
+            {
+                // 기존 로컬DB 연결 문자열 --> SQL EXPRESS
+                //SQLDB db = new SQLDB(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\KOSTA\source\repos\MyDatabase.mdf;Integrated Security=True;Connect Timeout=30");
+                SQLDB db= new SQLDB(@"Data Source = 192.168.0.80; User ID = kosta6; Password = kosta");
+
+                if (mylib.GetEncrypt(pwd)==db.Get($"select password from users where uid='{uid}'").ToString().Trim())
+                {
+                    //쿠키에 연결된 아이디 기록
+                    Session["uid"] = uid;
+                    Session["account"] = db.Get($"select account from users where uid='{uid}'");
+                    //인수 하나더 추가 시, 두번째 인수는 컨트롤러 명- Default는 현재 컨트롤러
+                    return RedirectToAction("Index");
+                }
+            }
+            return View();
+        }
+    }
+}
+/////////////////////////////////////// App_Start > _Layout.cshtml
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - 내 ASP.NET 애플리케이션</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("애플리케이션 이름", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li>@Html.ActionLink("홈", "Index", "Home")</li>
+                    <li>@Html.ActionLink("정보", "About", "Home")</li>
+                    <li>@Html.ActionLink("연락처", "Contact", "Home")</li>
+                                                                            // 계정 권한에 따라 레이아웃에 추가할 링크 선택 가능
+                    @if (Session["account"]!=null && Session["account"].ToString().Trim() == "1")   // Razor
+                    {
+                        <li>@Html.ActionLink("사용자관리", "Index", "users")</li>
+                    }
+
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - 내 ASP.NET 애플리케이션</p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

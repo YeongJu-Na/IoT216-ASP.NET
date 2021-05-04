@@ -96,9 +96,8 @@
   - Action메서드: 외부 요청에 반응하여 결과를 리턴하는 메서드, 웹 request를 받아 처리 후 그 출력물인 ActionResult 객체를 리턴
     - ex) return View();	// 베이스 클래스의 View메서드 호출, (MVC Framework에서 미리 지정한) /Views/Home 폴더 (/Views/{컨트롤러명}) 밑에서 메서드와 동일한 이름인 Index.cshtml (C#의 경우) 파일을 HTML 랜더링하여 결과인 ViewResult (ActionResult의 파생클래스) 객체를 리턴
 
---------
-#### Entity Framework(EF)
-: ORM 도구, ms가 직접 구현한 orm기술로는 EF, LINQ TO SQL이 있음, 이외에도 NHibernate, Dapper같은 .NET ORM 오픈 소스들이 있다
+- Entity Framework(EF)
+  - ORM 도구, ms가 직접 구현한 orm기술로는 EF, LINQ TO SQL이 있음, 이외에도 NHibernate, Dapper같은 .NET ORM 오픈 소스들이 있다
 
 
 
